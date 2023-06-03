@@ -1,5 +1,5 @@
 import uasyncio as asyncio
-import json, sys
+import json, time
 from micropython import const
 
 from utilities import config, format_error
@@ -12,7 +12,7 @@ WARNING = const("WARNING")
 INFO = const("INFO")
 DEBUG = const("DEBUG")
 
-_REPORT_TRANSACTIONS = True
+_REPORT_TRANSACTIONS = False
 
 
 class _Handlers:
@@ -74,13 +74,13 @@ class _Channel:
     async def _run(self):
         try:
             self._channels.append(self)
-            print(f"+  {len(self._channels)} CHANNELS OPEN ({self._channel})")
+            print(f"+  [{time.time():8d}] {len(self._channels)} CHANNELS OPEN ({self._channel})")
             await asyncio.gather(self._receiver_task())
         except asyncio.TimeoutError:
             print("catch TimeoutError - let finally close channel")
         finally:
             self._channels.remove(self)
-            print(f"-  {len(self._channels)} CHANNELS OPEN ({self._channel})")
+            print(f"-  [{time.time():8d}] {len(self._channels)} CHANNELS OPEN ({self._channel})")
         await state.update('webapp', 'gateway-connections', len(self._channels))
 
     async def send(self, msg):
