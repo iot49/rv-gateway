@@ -5,7 +5,7 @@ from . import state_filter
 from utilities import config, timestamp, ids
 
 
-# str, float | int | str | bool
+# eid -> str, float | int | str | bool
 _STATE = {}
 
 _TOTAL_UPDATES = 0
@@ -119,3 +119,8 @@ async def send_current_state(webapp):
 
 def get(did, aid) -> EntityValue:
     return _STATE.get((did, aid))
+
+def get_current_state() -> dict:
+    # pointer to state table - 
+    # debugging only - don't modify
+    return _STATE

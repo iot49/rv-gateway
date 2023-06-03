@@ -21,6 +21,15 @@ async def get_config(request):
     """Config as json"""
     return config.get()
 
+@app.get('state_get_all')
+async def state_get_all(request):
+    from io import StringIO
+    from ..state import get_current_state
+    s = StringIO()
+    for eid, value in get_current_state.items():
+        s.write(f"{eid:40} {type(value):12} {value}\n")
+    return s.getvalue()
+
 @app.get('test')
 async def test(request):
     from .. import testing
