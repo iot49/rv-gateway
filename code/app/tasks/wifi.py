@@ -71,7 +71,7 @@ async def main(interval: float):
     
             
             # verify that internet is reachable
-            _IP = router_ip = network.WLAN(network.STA_IF).ifconfig()[2]
+            _IP, _,  router_ip, __ = network.WLAN(network.STA_IF).ifconfig()
             await update('wifi', 'ip', _IP)    # BLE connections (and successful wifi) see this
             try:
                 if wlan.isconnected():
