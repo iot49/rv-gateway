@@ -18,15 +18,14 @@ _WLAN_STATUS = {
      204: "handsake timeout"
 }
 
-_IP = None
 
 def ip():
-    return _IP
+    return network.WLAN(network.STA_IF).ifconfig()[0]
+
 
 async def main(interval: float):
     # check connection every interval seconds
     print("Starting wifi task ...")
-    global _IP
 
     wlan = network.WLAN(network.STA_IF)
     if wlan.isconnected():
@@ -55,15 +54,17 @@ async def main(interval: float):
                 await update('wifi', 'wifi-connection-attempts', connection_attemps)
 
                 # verify that ssid is up
-                net = [ x for x in wlan.scan() if x[0] == ssid.encode() ]
-                if len(net) > 0:
-                    net = net[0]
-                    print(f"Found ssid '{ssid}' on channel {net[2]} with RSSI {net[3]} dBm")
-                else:
-                    print(f"WARNING: ssid '{ssid}' not found. Deactivating and re-activating wlan.")
-                    wlan.active(False)
-                    await asyncio.sleep_ms(500)
-                    wlan.active(True)
+                for _ in range(3):
+                    net = [ x for x in wlan.scan() if x[0] == ssid.encode() ]
+                    if len(net) > 0:
+                        net = net[0]
+                        print(f"Found ssid '{ssid}' on channel {net[2]} with RSSI {net[3]} dBm")
+                        break
+                    else:
+                        print(f"WARNING: ssid '{ssid}' not found. Deactivating and re-activating wlan.")
+                        wlan.active(False)
+                        await asyncio.sleep_ms(500)
+                        wlan.active(True)
 
                 # connect
                 try:
@@ -80,29 +81,30 @@ async def main(interval: float):
                             break
                         await asyncio.sleep_ms(100)
                         print(".", end="")
+                print()
                 if wlan.isconnected():
-                    print(f"\nWiFi connected @", wlan.ifconfig())
+                    print(f"WiFi connected @", wlan.ifconfig())
     
             
             # verify that internet is reachable
-            _IP, _,  router_ip, __ = network.WLAN(network.STA_IF).ifconfig()
-            await update('wifi', 'ip', _IP)    # BLE connections (and successful wifi) see this
+            ip, _,  router_ip, __ = network.WLAN(network.STA_IF).ifconfig()
+            await update('wifi', 'ip', ip)    # BLE connections (and successful wifi) see this
             try:
+                quiet_ping = False
                 if wlan.isconnected():
-                    lan = ping(router_ip, quiet=True)[1] > 0
+                    lan = ping(router_ip, quiet=quiet_ping)[1] > 0
                 # retest - for flaky GL.iNet router ???
                 if wlan.isconnected():
                     wan_ip = config.get('app', 'wifi', 'wan-check')
-                    wan = wan_ip != None and ping(wan_ip, quiet=True)[1] > 0
+                    wan = wan_ip != None and ping(wan_ip, quiet=quiet_ping)[1] > 0
             except OSError as e:
                 await webapp.info('ERROR', f"ping failed in wifi-task, wlan.is_connected={wlan.isconnected()}", e)
 
             # report status
-            if wlan.isconnected():
-                status = wlan.status()
-                await update('wifi', 'wifi-status', _WLAN_STATUS.get(status, str(status)))
-                await update('wifi', 'wifi-lan', lan)
-                await update('wifi', 'wifi-wan', wan)
+            status = wlan.status()
+            await update('wifi', 'wifi-status', _WLAN_STATUS.get(status, str(status)))
+            await update('wifi', 'wifi-lan', lan)
+            await update('wifi', 'wifi-wan', wan)
 
         await asyncio.sleep(interval)
   
