@@ -20,13 +20,11 @@ class RVC:
 
    
     async def run(self):
-        with open('/rvc.txt', 'w') as file:
-            while True:
-                # print("rvc info", self._can.info())
-                if self._can.any():
-                    print("rvc got", self._can.recv()) 
-                    file.write(f"{self._can.recv()}\n") 
-                await asyncio.sleep(0)
+        while True:
+            # print("rvc info", self._can.info())
+            if self._can.any():
+                print("rvc got", self._can.recv()) 
+            await asyncio.sleep(0)
             
 
 async def main():

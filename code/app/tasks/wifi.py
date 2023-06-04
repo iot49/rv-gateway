@@ -1,5 +1,5 @@
 import uasyncio as asyncio
-import network, ntptime
+import network
 from uping import ping
 
 from utilities import config
