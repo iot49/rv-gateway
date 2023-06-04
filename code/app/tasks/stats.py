@@ -36,15 +36,15 @@ async def send_stats(period):
         await state.update('stats', 'updates-sent',  (stats[1]-last_stats[1])/dt)
         last_stats = stats
 
-        # jitter statistics
+        # latency statistics
         N = 0.01*sum(_COUNTS)
         for i, b in enumerate(_BREAKS):
-            await state.update('stats', f'jitter < {b:4.0f} ms', _COUNTS[i]/N)
-        await state.update('stats', f'jitter > {_BREAKS[-1]:4.0f} ms', _COUNTS[-1]/N)
+            await state.update('stats', f'latency < {b:4.0f} ms', _COUNTS[i]/N)
+        await state.update('stats', f'latency > {_BREAKS[-1]:4.0f} ms', _COUNTS[-1]/N)
 
 
-async def jitter(period_ms):
-    # measure asyncio scheduler "jitter" (delay from ideal time task should run)
+async def latency(period_ms):
+    # measure asyncio scheduler "latency" (delay from ideal time task should run)
     t = ticks_ms()
     await asyncio.sleep_ms(period_ms)
     while True:
@@ -66,9 +66,9 @@ async def counter():
 async def main():
     config.set('devices', 'stats', 'entities', 'updates-total', 'unit', '/sec')
     config.set('devices', 'stats', 'entities', 'updates-sent',  'unit', '/sec')
-    config.set('devices', 'stats', 'entities', f'jitter > {_BREAKS[-1]:4.0f} ms', 'unit', '%')
+    config.set('devices', 'stats', 'entities', f'latency > {_BREAKS[-1]:4.0f} ms', 'unit', '%')
     for b in _BREAKS:
-        config.set('devices', 'stats', 'entities', f'jitter < {b:4.0f} ms', 'unit', '%')
+        config.set('devices', 'stats', 'entities', f'latency < {b:4.0f} ms', 'unit', '%')
 
     # average throughput over 60 seconds
     asyncio.create_task(send_stats(60))
@@ -76,5 +76,5 @@ async def main():
     # "pulse"
     asyncio.create_task(counter())
 
-    # measure jitter once a second
-    await jitter(1000)
+    # measure latency once a second
+    await latency(1000)
