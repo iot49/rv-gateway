@@ -60,7 +60,10 @@ async def main(interval: float):
                     net = net[0]
                     print(f"Found ssid '{ssid}' on channel {net[2]} with RSSI {net[3]} dBm")
                 else:
-                    print(f"WARNING: ssid '{ssid}' not found. Trying to connect anyway.")
+                    print(f"WARNING: ssid '{ssid}' not found. Deactivating and re-activating wlan.")
+                    wlan.active(False)
+                    await asyncio.sleep_ms(500)
+                    wlan.active(True)
 
                 # connect
                 try:
@@ -72,12 +75,13 @@ async def main(interval: float):
                     print("Waiting for WiFi connection ", end="")
                     # wait for connection: 
                     # this can take a long time - don't give up early!
-                    for i in range(200):
+                    for i in range(1000):
                         if wlan.isconnected():
                             break
                         await asyncio.sleep_ms(100)
                         print(".", end="")
-                print(f"\nWiFi connected {wlan.isconnected()} @", wlan.ifconfig())
+                if wlan.isconnected():
+                    print(f"\nWiFi connected @", wlan.ifconfig())
     
             
             # verify that internet is reachable
