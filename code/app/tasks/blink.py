@@ -40,9 +40,9 @@ except ImportError:
     async def main(half_period_ms):
         global _Color
         
-        # enable power
-        # ldo2 = Pin(LDO2, Pin.OUT)
-        # ldo2.value(1)
+        # enable LED power
+        ldo2 = Pin(LDO2, Pin.OUT)
+        ldo2.value(1)
 
         # configure neopixel
         np = NeoPixel(Pin(RGB_DATA, Pin.OUT), 1)

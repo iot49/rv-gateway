@@ -90,7 +90,7 @@ async def main(interval: float):
             ip, _,  router_ip, __ = network.WLAN(network.STA_IF).ifconfig()
             await update('wifi', 'ip', ip)    # BLE connections (and successful wifi) see this
             try:
-                quiet_ping = False
+                quiet_ping = True
                 if wlan.isconnected():
                     lan = ping(router_ip, quiet=quiet_ping)[1] > 0
                 # retest - for flaky GL.iNet router ???

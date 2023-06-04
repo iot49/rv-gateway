@@ -152,9 +152,10 @@ DEFAULT_CONFIG = {
         {
             "icon": "analytics",
             "entities": [ 
-                "stats,*",
+                "stats,latency*",
                 "wifi,*",
                 "webapp,*",
+                "stats,updates*"
             ]
         },
     ],
