@@ -1,6 +1,9 @@
 import sys, io, os
 import unittest
 
+
+# this won't work with freezing!
+
 if not "tests" in sys.path:
     sys.path.append("tests")
 

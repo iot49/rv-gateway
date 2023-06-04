@@ -38,7 +38,9 @@ class ValueIO(Protocol):
         on the specifics of the class.
         """
 
+    """
     # pylint: disable=no-self-use,unused-argument
-    @value.setter
+    @input_value.setter
     def value(self, input_value: float, /):
-        ...
+        pass
+    """

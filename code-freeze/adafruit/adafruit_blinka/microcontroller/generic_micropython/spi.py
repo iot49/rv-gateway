@@ -23,9 +23,13 @@ class SPI:
         phase=0,
         bits=8,
         firstbit=_SPI.MSB,
-    ):# SPDX-FileCopyrightText: 2021 Melissa LeBlanc-Williams for Adafruit Industries
+    ):
+        pass
+    
+# SPDX-FileCopyrightText: 2021 Melissa LeBlanc-Williams for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
+
 """SPI Class for RP2040"""
 from machine import SPI as _SPI
 from machine import Pin

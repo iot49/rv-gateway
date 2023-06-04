@@ -53,6 +53,16 @@ async def main(interval: float):
             if not wlan.isconnected():
                 connection_attemps += 1
                 await update('wifi', 'wifi-connection-attempts', connection_attemps)
+
+                # verify that ssid is up
+                net = [ x for x in wlan.scan() if x[0] == ssid.encode() ]
+                if len(net) > 0:
+                    net = net[0]
+                    print(f"Found ssid '{ssid}' on channel {net[2]} with RSSI {net[3]} dBm")
+                else:
+                    print(f"WARNING: ssid '{ssid}' not found. Trying to connect anyway.")
+
+                # connect
                 try:
                     wlan.connect(ssid, pwd)
                 except OSError as e:
@@ -67,7 +77,7 @@ async def main(interval: float):
                             break
                         await asyncio.sleep_ms(100)
                         print(".", end="")
-                print("\nWiFi connected @", wlan.ifconfig())
+                print(f"\nWiFi connected {wlan.isconnected()} @", wlan.ifconfig())
     
             
             # verify that internet is reachable

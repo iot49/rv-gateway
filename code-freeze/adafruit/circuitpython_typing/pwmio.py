@@ -25,4 +25,4 @@ class PWMOut(Protocol):
     # pylint: disable=no-self-use,unused-argument
     @duty_cycle.setter
     def duty_cycle(self, duty_cycle: int) -> None:
-        ...
+        pass
