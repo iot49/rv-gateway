@@ -17,9 +17,7 @@ class RVC:
     def __init__(self):
         self._can = can = CAN(0, tx=CAN_TX, rx=CAN_RX, mode=CAN.NORMAL, baudrate=BAUDRATE_250k)
         can.setfilter(0, CAN.FILTER_ADDRESS, params=[0x0], extframe=True)  
-        print("rvc info", can.info())
-        # send a message with id 123
-        # can.send([1,2,3], 0x102, extframe=False)   
+
    
     async def run(self):
         with open('/rvc.txt', 'w') as file:

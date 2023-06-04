@@ -1,4 +1,4 @@
-from collections import deque
+from ucollections import OrderedDict, deque
 
 from . import webapp
 from . import state_filter
@@ -6,7 +6,7 @@ from utilities import config, timestamp, ids
 
 
 # eid -> str, float | int | str | bool
-_STATE = {}
+_STATE = OrderedDict()
 
 _TOTAL_UPDATES = 0
 _SENT_UPDATES = 0
@@ -112,15 +112,21 @@ async def update(did: str, aid: str, value: float | int | str | bool):
 
 async def send_current_state(webapp):
     """Send the current state to channel."""
+    global _STATE
+    # put this in an at least semi-ordered state ...
+    _STATE = OrderedDict(sorted(_STATE.items()))
     for eid, ev in _STATE.items():
         update = { 'tag': 'state_update', 'eid': eid, 'value': ev.value, 'all': True }
         await webapp.send(update)
 
 
 def get(did, aid) -> EntityValue:
+    global _STATE
     return _STATE.get((did, aid))
+
 
 def get_current_state() -> dict:
     # pointer to state table - 
     # debugging only - don't modify
+    global _STATE
     return _STATE

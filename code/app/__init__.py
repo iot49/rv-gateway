@@ -15,7 +15,7 @@ load_utilities()
 
 def load_tasks(task='wifi'):
     # back-door for debugging
-    # Note: tasks a long time!
+    # Note: takes long if modules need compilation
     from . import tasks
     return tasks
 

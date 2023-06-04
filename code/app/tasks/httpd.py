@@ -25,9 +25,21 @@ async def get_config(request):
 async def state_get_all(request):
     from io import StringIO
     from ..state import get_current_state
+
     s = StringIO()
-    for eid, value in get_current_state.items():
-        s.write(f"{eid:40} {type(value):12} {value}\n")
+    de = 'device name: entity name'
+    s.write(f"{'eid':30} {de:40} {'type':8} {'value':24} {'unit':6} {'filter':12}\n\n")
+    
+    for eid, ev in get_current_state().items():
+        cfg = config.get_entity_config(eid)
+        name = f"{cfg.get('device_name')}: {cfg.get('name')}"
+        icon = cfg.get('icon')
+        unit = cfg.get('unit')
+        filter = cfg.get('filter', [])
+        value = ev.value
+        type_ = type(value).__name__
+        if isinstance(value, float):  value = f"{value:<20.5}"
+        s.write(f"{eid:30} {name:40} {type_:8} {str(value):24} {unit:6} {icon:12} {filter}\n")
     return s.getvalue()
 
 @app.get('test')
