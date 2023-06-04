@@ -28,8 +28,8 @@ async def state_get_all(request):
 
     s = StringIO()
     de = 'device name: entity name'
-    s.write(f"{'eid':30} {de:40} {'type':8} {'value':24} {'unit':6} {'filter':12}\n\n")
-    
+    s.write(f"{'eid':30} {de:40} {'type':8} {'value':24} {'unit':6} {'icon':12} {'filter':12}\n\n")
+
     for eid, ev in get_current_state().items():
         cfg = config.get_entity_config(eid)
         name = f"{cfg.get('device_name')}: {cfg.get('name')}"

@@ -60,7 +60,7 @@ async def counter():
     while True:
         await state.update('stats', 'count', count)
         count += 1
-        await asyncio.sleep_ms(2000)
+        await asyncio.sleep_ms(100)
 
 
 async def main():

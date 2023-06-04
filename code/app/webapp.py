@@ -75,13 +75,14 @@ class _Channel:
         try:
             self._channels.append(self)
             print(f"+  [{time.time():8d}] {len(self._channels)} CHANNELS OPEN ({self._channel})")
+            await state.update('webapp', 'gateway-connections', len(self._channels))
             await asyncio.gather(self._receiver_task())
         except asyncio.TimeoutError:
             print("catch TimeoutError - let finally close channel")
         finally:
             self._channels.remove(self)
             print(f"-  [{time.time():8d}] {len(self._channels)} CHANNELS OPEN ({self._channel})")
-        await state.update('webapp', 'gateway-connections', len(self._channels))
+            await state.update('webapp', 'gateway-connections', len(self._channels))
 
     async def send(self, msg):
         """Send message to this channel."""
