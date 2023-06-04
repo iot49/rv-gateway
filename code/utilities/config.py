@@ -188,7 +188,8 @@ def get_views():
     for did, dev_attr in get('devices').items():
         for aid in dev_attr.get('entities') or {}:
             eids.add(ids.eid(did, aid))
-    
+    eids = sorted(eids)
+
     # views
     views = []
     for view in get('views') or []:
