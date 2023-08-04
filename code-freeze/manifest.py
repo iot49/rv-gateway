@@ -6,6 +6,7 @@ module("boot.py")
 module("main.py")
 
 # packages
+package("app")
 package("aioble")
 package("collections")
 
